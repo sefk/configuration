@@ -3,9 +3,12 @@
   compress
   delaycompress
   dateext
+  dateformat -%Y%m%d-%s
   missingok
   notifempty
-  daily
   rotate 365000
   size 1M
+  postrotate
+      /usr/bin/killall -HUP rsyslogd
+    endscript
 }

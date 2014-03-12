@@ -51,14 +51,16 @@
   template: dest=/etc/rsyslog.d/99-edx.conf src=edx_rsyslog.j2 owner=root group=root mode=644
   notify: restart rsyslogd
 
-
 - name: Install logrotate configuration for edX
   template: dest=/etc/logrotate.d/edx-services src=etc/logrotate.d/edx_logrotate.j2 owner=root group=root mode=644
 
   # This is in common to keep all logrotation config
   # in the same role
 - name: Install logrotate configuration for tracking file
-  template: dest=/etc/logrotate.d/tracking.log src=etc/logrotate.d/edx_logrotate_tracking_log.j2 owner=root group=root mode=644
+  template: dest=/etc/logrotate.d/hourly/tracking.log src=etc/logrotate.d/edx_logrotate_tracking_log.j2 owner=root group=root mode=644
+
+- name: logrotation of tracking.log set to hourly manually via cron
+  cron: name="tracking.log" hour="*" job="test -x /usr/sbin/logrotate || exit 0; /usr/sbin/logrotate /etc/logrotate.d/hourly"
 
 - name: update /etc/hosts
   template: src=hosts.j2 dest=/etc/hosts
